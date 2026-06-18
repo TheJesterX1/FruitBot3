@@ -19,15 +19,18 @@ object BotLoop {
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private var job: Job? = null
-    @Volatile var running = false; private set
+
+    @Volatile var running = false
+        private set
 
     fun start() {
         if (job?.isActive == true) return
         running = true
         job = scope.launch {
             while (isActive && running) {
-                try { tick() } catch (e: CancellationException) { break }
-                catch (e: Exception) { Log.w(TAG, e.message) }
+                try { tick() }
+                catch (e: CancellationException) { break }
+                catch (e: Exception) { Log.w(TAG, e.message ?: "error") }
                 delay(100)
             }
         }
@@ -35,18 +38,26 @@ object BotLoop {
     }
 
     fun stop() {
-        running = false; job?.cancel(); job = null
+        running = false
+        job?.cancel()
+        job = null
         Log.d(TAG, "stopped")
     }
 
     private fun tick() {
-        if (GestureService.foregroundPkg !in PKGS) return
-        val src = SliceService.frame ?: return
-        val bmp = try { src.copy(src.config ?: Bitmap.Config.ARGB_8888, false) }
-                  catch (e: Exception) { return }
+        val pkg: String = GestureService.foregroundPkg
+        if (pkg.isEmpty() || pkg !in PKGS) return
+
+        val src: Bitmap = SliceService.frame ?: return
+        val bmp = try {
+            src.copy(src.config ?: Bitmap.Config.ARGB_8888, false)
+        } catch (e: Exception) { return }
+
         try {
             for (t in FruitDetector.detect(bmp)) slash(t.x, t.y)
-        } finally { bmp.recycle() }
+        } finally {
+            bmp.recycle()
+        }
     }
 
     private fun slash(cx: Float, cy: Float) {
@@ -54,6 +65,10 @@ object BotLoop {
         val deg = angles[Random.nextInt(angles.size)] + Random.nextFloat() * 20f - 10f
         val r = Math.toRadians(deg.toDouble()).toFloat()
         val h = 110f
-        GestureService.swipe(cx - h * cos(r), cy - h * sin(r), cx + h * cos(r), cy + h * sin(r), 55)
+        GestureService.swipe(
+            cx - h * cos(r), cy - h * sin(r),
+            cx + h * cos(r), cy + h * sin(r),
+            55
+        )
     }
 }
