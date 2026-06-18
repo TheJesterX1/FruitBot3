@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <FrameLayout
+        android:id="@+id/bubble"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/bubble_start"
+        android:elevation="8dp">
+
+        <TextView
+            android:id="@+id/icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="▶"
+            android:textSize="28sp"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textStyle="bold"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START"
+        android:textSize="9sp"
+        android:textStyle="bold"
+        android:textColor="#EEFFFFFF"
+        android:letterSpacing="0.1"
+        android:layout_marginTop="5dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:background="@drawable/pill"/>
+
+</LinearLayout>
